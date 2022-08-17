@@ -1,4 +1,7 @@
 //huffman compression algorithm
+/*
+this algorithm is only for demonstration purposes.
+*/
 #include <stdio.h>
 #include <string.h>
 #include <stdbool.h>
@@ -6,7 +9,7 @@
 typedef struct charinfo{
 	unsigned char	character;
 	unsigned long long int 	occurence;
-	unsigned int 	alloc;
+	unsigned int 		alloc;
 	short int		huffmancode[8];
 }charinfo;
 typedef struct charlist{
@@ -195,10 +198,9 @@ charlist MakeHuffmannTree(unsigned int Outs, unsigned int reference, MASTER tree
 	/*
 	A "mother" tree is completed if its only one character long OR if all its "successor" pseudo trees are completed.
 	the father tree is the MASTER tree that contains all the pseudo trees, and to be complete must been complete all its "sons".
-	MakeHuffmannTree() will be a recursive function that will calls itself until the "father" tree is completed.
 	it will start going right until its complete, and it will always go to the rightest possible ramification.
-	MASTER[128] will be the allocation where the function will write.
-	MASTER[0] is the father tree, and it´s untouchable until all the ramifications are complete
+	MASTER tree will be the allocation where the function will write.
+	tree.MASTER[0] is the father tree, and itÂ´s untouchable until all the ramifications are complete
 	*/
 	//printf("\ncracking tree");
 	
@@ -226,7 +228,6 @@ charlist MakeHuffmannTree(unsigned int Outs, unsigned int reference, MASTER tree
 	tree.MASTER[reference].completed=is_complete(tree.MASTER[reference],tree);
 	tree=select_next(&Outs, &reference, tree);
 	//printf("\ninfinite loop...");
-	//printf("recursion... %i and %i, sizes: %i, %i, %i", Outs, reference, tree.MASTER[reference].size, tree.MASTER[Outs].size, tree.MASTER[Outs+1].size);
 }
 
 	short int root[8];
@@ -245,18 +246,13 @@ charlist MakeHuffmannTree(unsigned int Outs, unsigned int reference, MASTER tree
 		while(i!=0){
 			
 			if(tree.MASTER[tree.MASTER[i].predecessor].SucesorRitgt==i){
-				//esto se leería en orden inversoo
-				//printf("1");
 				tree.MASTER[0].charlist[l].huffmancode[I]=1;
 			}
 			else{
-				//printf("0");
 				tree.MASTER[0].charlist[l].huffmancode[I]=0;
 			}
-			
 			i=tree.MASTER[i].predecessor;
 			I++;
-			//printf("\n%i",i);
 		}
 		tree.MASTER[0].charlist[l].character=tree.MASTER[p].charlist[0].character;
 	}
@@ -266,10 +262,6 @@ charlist MakeHuffmannTree(unsigned int Outs, unsigned int reference, MASTER tree
 	tree.MASTER[0].charlist[tree.MASTER[p].charlist[0].alloc].character=tree.MASTER[p].charlist[0].character;		
 	}
 }
-	
-	
-	
-	
 	return tree.MASTER[0];	
 }
 
@@ -330,11 +322,6 @@ int main(void){
 	CharList=SORT(CharList,NumberOfChars);
 	non_compressed_data(CharList,NumberOfChars,input);
 	printf("\nthe tree size is: %u",CharList.size);
-	/*
-	unsigned int a=CrackTree(CharList, 0, NumberOfChars);
-	printf("\nthe tree breakpoint is: %u and the partial sums are %u and %u", a, CharListSum(CharList, 0, a), CharListSum(CharList, a+1, NumberOfChars));
-	*/
-	
 	compress_data(CharList, input);
 	printf("\n");
 	system("pause");
